@@ -1,0 +1,616 @@
+/* =============================================================
+   NOFOLIOS BRAND TOKENS
+
+   The Nofolios house palette, type scale and shape language, kept
+   here as the single source of colour for the panel. The panel is
+   light only: the brand is a white surface with an indigo accent,
+   and it does not invert for Figma's dark theme.
+   ============================================================= */
+:root {
+  --bg: #ffffff;
+  --surface: #f9fafb;
+  --surface-tint: #faf5ff;
+  --surface-tint-line: #f3e8ff;
+  --line: #e5e7eb;
+  --line-soft: #f3f4f6;
+  /* Director's --line is 1.24:1 on white, so a text field, a select or a
+     button has no edge a low-vision user can find. Decorative rules keep
+     --line/--line-soft; anything that is the boundary of a control uses this
+     one, which clears the 3:1 that WCAG 1.4.11 asks of a control's shape. */
+  --line-strong: #b6bcc6;
+  --ink: #111827;
+  --ink-body: #374151;
+  --muted: #6b7280;
+  /* Director ships #9ca3af here, which is 2.5:1 on white and is used for real
+     text at 10-11.5px. Darkened to the lightest grey that clears 4.5:1 on both
+     --bg and --surface; it stays a clear step lighter than --muted. */
+  --faint: #767d8a;
+  --brand: #5a4eff;
+  --brand-hover: #483bff;
+  --brand-grad-2: #7b72ff;
+  --brand-grad-3: #c77dff;
+  --accent: #eea0ff;
+  --brand-dark: #2f2e2c;
+  --brand-tint: rgba(90, 78, 255, 0.10);
+  --accent-tint: rgba(238, 160, 255, 0.15);
+  /* A disabled primary cannot simply be dimmed: `opacity` applies to the whole
+     button, so the white label dims with the fill and lands at 2.1:1. A flat
+     lavender fill with its own ink keeps the label readable at ~7:1. */
+  --brand-disabled: #c9c5f5;
+  --brand-disabled-ink: #3b3570;
+  /* #dc2626 on --danger-tint measures 4.41:1, just under the small-text
+     threshold; one step darker clears it and still reads as red. */
+  --danger: #c81e1e;
+  --danger-tint: #fef2f2;
+  --danger-line: #fecaca;
+  --warn: #92400e;
+  --warn-tint: #fffbeb;
+  --warn-line: #fde68a;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 9999px;
+  --shadow-xs: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-brand: 0 4px 6px -1px rgba(90, 78, 255, 0.25), 0 2px 4px -2px rgba(90, 78, 255, 0.25);
+  --shadow-brand-soft: 0 4px 6px -1px rgba(90, 78, 255, 0.2), 0 2px 4px -2px rgba(90, 78, 255, 0.2);
+  --shadow-brand-lg: 0 10px 15px -3px rgba(90, 78, 255, 0.3), 0 4px 6px -4px rgba(90, 78, 255, 0.3);
+  --glow-accent: 0 0 8px #eea0ff;
+  --row: 34px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: var(--r-pill); }
+::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+
+/* ------------------------------------------------------------------ shell */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  border-top: 4px solid var(--brand);
+}
+
+/* The accent wash behind the header. */
+.app::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 96px;
+  background: linear-gradient(to bottom, var(--accent-tint), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.panel-header,
+.tabs,
+.body,
+.footer { position: relative; z-index: 1; }
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 16px 9px;
+  flex: none;
+}
+.brandmark { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1 1 auto; }
+.logo-tile {
+  width: 30px; height: 30px; flex: none;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.logo-tile svg { width: 17px; height: auto; display: block; }
+/* Both runs are nowrap, so a narrow plugin window would run them into each
+   other unless they are allowed to shrink. The subtitle gives way first. */
+.brand-name {
+  font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
+  white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+}
+.brand-sub {
+  font-size: 10px; font-weight: 500; color: var(--faint);
+  white-space: nowrap; letter-spacing: 0.01em;
+  flex: 0 3 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------- tab bar */
+
+/* Director's `.seg`: an inline-flex pill that hugs its buttons, no gap.
+   `align-self` is what keeps it hugging inside the column-flex shell. It wraps
+   rather than scrolls, because a plugin window can be dragged narrower than the
+   six tabs and a hidden scroller would simply lose the ones that fall off. */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  max-width: calc(100% - 32px);
+  margin: 0 16px 10px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-pill);
+  flex: none;
+}
+.tab {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 5px 16px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tab:hover { color: var(--brand); }
+.tab[aria-selected="true"] {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--shadow-brand);
+}
+.tab[aria-selected="true"]:hover { color: #fff; }
+
+.body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; }
+.pane { padding: 2px 16px 18px; display: flex; flex-direction: column; gap: 13px; }
+
+.footer {
+  flex: none;
+  border-top: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 16px 13px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------- blocks */
+
+.section { display: flex; flex-direction: column; gap: 8px; }
+.section > h3 {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field > label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.row { display: flex; gap: 8px; }
+.row > * { min-width: 0; }
+.grow { flex: 1 1 auto; }
+.spread { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.muted { color: var(--muted); }
+.mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+.hr { height: 1px; background: var(--line-soft); margin: 2px 0; }
+
+/* ---------------------------------------------------------------- inputs */
+
+input[type="text"],
+input[type="number"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  height: var(--row);
+  padding: 0 11px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-body);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  line-height: 1.55;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11.5px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 1px var(--brand);
+}
+input::placeholder, textarea::placeholder { color: var(--faint); font-weight: 400; }
+select { cursor: pointer; }
+input[type="range"] { height: var(--row); accent-color: var(--brand); }
+input[type="color"] {
+  padding: 2px;
+  height: var(--row);
+  width: 38px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 22px;
+  font-size: 11.5px;
+  color: var(--ink-body);
+}
+.check input { accent-color: var(--brand); margin: 0; }
+
+/* --------------------------------------------------------------- buttons */
+
+button.btn {
+  appearance: none;
+  height: var(--row);
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink-body);
+  cursor: pointer;
+  /* A label longer than the box — the 30-digit SIDC strip on a narrow panel —
+     must clip inside the button rather than paint over its neighbours. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  transition: all 0.14s;
+}
+button.btn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+button.btn:active:not(:disabled) { transform: scale(0.98); }
+/* Dimming the whole button takes its label down with it, and the label is the
+   only thing saying which action is unavailable. The fill goes quiet instead. */
+button.btn:disabled { cursor: default; color: var(--muted); border-color: var(--line); }
+
+button.btn.primary {
+  background: linear-gradient(90deg, var(--brand), var(--brand-grad-2));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--shadow-brand-lg);
+}
+button.btn.primary:hover:not(:disabled) {
+  background: linear-gradient(90deg, var(--brand-hover), #685eff);
+  color: #fff;
+}
+button.btn.primary:disabled {
+  background: var(--brand-disabled);
+  color: var(--brand-disabled-ink);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+button.btn.ghost { border-color: transparent; background: none; color: var(--muted); font-weight: 500; }
+button.btn.ghost:hover:not(:disabled) { color: var(--brand); background: var(--surface-tint); }
+button.btn.ghost:disabled { border-color: transparent; }
+
+button.btn.sm { height: 26px; padding: 0 11px; font-size: 10.5px; }
+
+/* ----------------------------------------------------------------- pills */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill.warn { background: var(--warn-tint); color: var(--warn); border: 1px solid var(--warn-line); }
+.pill.danger { background: var(--danger-tint); color: var(--danger); border: 1px solid var(--danger-line); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-body);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  padding: 5.5px 12px;
+  cursor: pointer;
+  transition: all 0.13s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--brand); color: var(--brand); }
+.chip[aria-pressed="true"] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--shadow-brand);
+}
+.chip[aria-pressed="true"]:hover { color: #fff; }
+
+/* --------------------------------------------------------------- preview */
+
+.preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 172px;
+  padding: 14px;
+  border: 1px solid var(--surface-tint-line);
+  border-radius: var(--r-lg);
+  /* A whisper of a dot grid, so a white or unfilled symbol still reads. */
+  background:
+    radial-gradient(circle, var(--surface-tint-line) 1px, transparent 1px) 0 0 / 13px 13px,
+    var(--surface-tint);
+  overflow: hidden;
+}
+.preview svg { max-width: 100%; max-height: 220px; height: auto; }
+.preview .badge { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; }
+.preview .sidc-strip { position: absolute; bottom: 8px; left: 10px; right: 10px; text-align: center; }
+.preview .sidc-strip .muted { font-size: 10.5px; font-weight: 500; }
+
+/* The ORBAT chart is laid out in its own pixel space, so the symbols inside it
+   may not be re-fitted by `.preview svg`. Scoped to the SVGs on purpose: a
+   blanket `*` also hit the label divs and killed their `max-width:100%`, which
+   is what makes a long unit name ellipsize instead of overlapping its
+   neighbour. */
+.orbat-canvas svg, .orbat-canvas svg * { max-width: none !important; max-height: none !important; }
+.orbat-canvas svg { height: auto; }
+.orbat-cell svg { display: block; }
+
+/* The chart is drawn at full size and shrunk with `transform`, which does not
+   change its layout box — so the scroll area of `.preview` would be the
+   unscaled size, mostly empty. This sizer carries the scaled dimensions. */
+.orbat-fit { position: relative; flex: 0 0 auto; overflow: hidden; }
+
+.sidc-strip code,
+.mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+/* ----------------------------------------------------------- result list */
+
+.results {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  max-height: 248px;
+  overflow-y: auto;
+}
+/* A row is a <button>, so it has to be stripped back to a list row. */
+.result {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 7px 11px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.12s;
+}
+.result:last-child { border-bottom: 0; }
+.result:hover { background: var(--surface-tint); }
+.result[aria-pressed="true"] { background: var(--brand-tint); }
+.result .name { flex: 1 1 auto; min-width: 0; }
+.result .name b { font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.result .path {
+  display: block;
+  color: var(--faint);
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result .code {
+  color: var(--faint);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  flex: none;
+}
+
+/* --------------------------------------------------------------- gallery */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 7px;
+}
+.cell {
+  appearance: none;
+  font-family: inherit;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 5px 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.cell:hover { border-color: var(--line-strong); box-shadow: var(--shadow-md); }
+.cell[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--brand-tint);
+  box-shadow: var(--shadow-brand-soft);
+}
+/* A rejected batch entry used to be dimmed wholesale, which took its only
+   explanation down to ~1.8:1. The cell reads as a hole in the sheet instead. */
+.cell.rejected { background: var(--bg); border-style: dashed; border-color: var(--line-strong); cursor: default; }
+.cell.rejected .label { color: var(--muted); font-style: italic; }
+.cell .thumb { height: 54px; width: 100%; display: flex; align-items: center; justify-content: center; }
+.cell .thumb svg { max-height: 54px; max-width: 100%; }
+.cell .label {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* `-webkit-line-clamp` can only truncate text that has somewhere to wrap.
+     A name like "Reconnaissance/Cavalry/Scout" has no break opportunity, so
+     without this it overflows the cell and is clipped at both ends. */
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  min-width: 0;
+}
+/* The selected cell swaps --surface for --brand-tint, which takes --muted under
+   4.5:1 — the one cell the user picked would be the least legible. */
+.cell[aria-pressed="true"] .label { color: var(--ink-body); }
+
+/* ------------------------------------------------------------- accordion */
+
+details.acc {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+details.acc[open] { border-color: var(--line); box-shadow: var(--shadow-sm); background: var(--bg); }
+details.acc > summary {
+  cursor: pointer;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+details.acc > summary::-webkit-details-marker { display: none; }
+/* The native marker is suppressed, so this glyph is the only thing saying the
+   row opens — it has to clear 3:1 on the summary's own --surface fill. */
+details.acc > summary::after {
+  content: '⌄';
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  transform: translateY(-3px);
+  transition: transform 0.15s;
+}
+details.acc[open] > summary::after { transform: translateY(1px) rotate(180deg); }
+details.acc > .acc-body {
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* --------------------------------------------------------------- banners */
+
+.banner {
+  padding: 9px 11px;
+  border-radius: var(--r-md);
+  background: var(--surface-tint);
+  border: 1px solid var(--surface-tint-line);
+  color: var(--ink-body);
+  font-size: 11px;
+  line-height: 1.55;
+}
+.banner code {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10.5px;
+  background: var(--bg);
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  color: var(--brand);
+}
+.banner.warn { background: var(--warn-tint); border-color: var(--warn-line); color: var(--warn); }
+.banner.error { background: var(--danger-tint); border-color: var(--danger-line); color: var(--danger); }
+
+/* The house empty state: a tinted tile, an --ink headline and --muted body.
+   A bare string is still allowed inside `.empty` for the small in-list cases. */
+.empty {
+  padding: 34px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.empty .em-circle {
+  width: 44px; height: 44px; border-radius: var(--r-lg); margin: 0 auto 12px;
+  background: var(--surface-tint);
+  border: 1px solid var(--surface-tint-line);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-weight: 800; font-size: 16px; color: var(--brand);
+  box-shadow: var(--shadow-xs);
+}
+.empty h3 {
+  margin: 0 0 5px;
+  font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
+}
+.empty p { margin: 0; font-size: 11.5px; color: var(--muted); }
+
+/* ------------------------------------------------------------------ focus */
+
+/* The galleries and result lists are the primary way of choosing a symbol, so
+   every one of them has to be reachable and visible from the keyboard. */
+button.btn:focus-visible,
+.tab:focus-visible,
+.chip:focus-visible,
+.cell:focus-visible,
+.result:focus-visible,
+details.acc > summary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+.result:focus-visible { outline-offset: -2px; }

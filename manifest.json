@@ -1,0 +1,26 @@
+{
+  "name": "Military Symbols",
+  "id": "military-symbols",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": [
+    "figma"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ],
+    "reasoning": "Everything the plugin needs \u2014 the APP-6E catalogue and the symbol renderer \u2014 is bundled locally. The plugin never makes network requests."
+  },
+  "documentAccess": "dynamic-page",
+  "permissions": [],
+  "capabilities": [],
+  "relaunchButtons": [
+    {
+      "command": "edit",
+      "name": "Edit military symbol",
+      "multipleSelection": true
+    }
+  ]
+}

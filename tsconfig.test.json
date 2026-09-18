@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "isolatedModules": false
+  },
+  "include": ["test/**/*.ts", "src/core/**/*.ts", "src/shared/**/*.ts", "src/ui/render.ts", "src/data/**/*.ts"]
+}

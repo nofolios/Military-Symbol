@@ -1,0 +1,32 @@
+{
+  "name": "military-symbols",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Figma plugin that generates NATO APP-6E (STANAG 2019 Ed. E) military map symbols",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build:catalog": "node build/build-catalog.mjs",
+    "build": "npm run build:catalog && node build/build.mjs",
+    "watch": "node build/build.mjs --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.ui.json && tsc --noEmit -p tsconfig.main.json && tsc --noEmit -p tsconfig.test.json",
+    "test": "npm run build && node build/build-test.mjs && node --test dist/test/*.test.mjs",
+    "verify": "node build/verify-manifest.mjs",
+    "preview": "node build/make-preview.mjs",
+    "package": "npm run build && npm run verify && node build/package.mjs"
+  },
+  "dependencies": {
+    "milsymbol": "^3.0.4",
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.100.0",
+    "@types/node": "^22.20.3",
+    "esbuild": "^0.25.10",
+    "milstandard-e": "^0.2.14",
+    "typescript": "^5.7.2"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}
