@@ -18,8 +18,20 @@ export function Select(props: {
   title?: string
   disabled?: boolean
 }) {
+  /**
+   * A <select> whose value matches no <option> paints empty, with nothing to
+   * say which control is the problem. A pasted SIDC can carry a value outside
+   * every list (context 9, identity 9, symbol set 99), so an unknown value is
+   * surfaced as its own option — the same thing the Build tab already does by
+   * hand for modifiers and amplifiers.
+   */
+  const known = props.value === '' || props.options.some(o => o.value === props.value)
+  const options = known
+    ? props.options
+    : [...props.options, { value: props.value, label: `${props.value} · not a recognised value`, group: 'From the pasted code' }]
+
   const groups: { name: string | undefined; items: Option[] }[] = []
-  for (const o of props.options) {
+  for (const o of options) {
     const last = groups[groups.length - 1]
     if (last && last.name === o.group) last.items.push(o)
     else groups.push({ name: o.group, items: [o] })

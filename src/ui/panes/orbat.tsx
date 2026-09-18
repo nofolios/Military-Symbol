@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { EXAMPLE_ORBAT } from '../../core/orbat'
 import { Accordion, Field, NumberInput } from '../components'
 import { buildOrbat, type OrbatBuild } from '../orbat-payload'
@@ -15,6 +15,11 @@ export interface OrbatSettings {
   symbolSize: number
   name: string
 }
+
+/** `.preview`'s own padding, in px; the chart is laid out inside it. */
+const PREVIEW_PADDING = 14
+/** Used for the very first paint, before the preview has been measured. */
+const FALLBACK_PREVIEW_WIDTH = 404
 
 export const DEFAULT_ORBAT: OrbatSettings = {
   text: EXAMPLE_ORBAT,
@@ -82,7 +87,28 @@ export function OrbatPane(props: {
 
   useEffect(() => { props.onBuild(build) }, [build])
 
-  const scale = build.width > 0 ? Math.min(1, 404 / build.width) : 1
+  /**
+   * The chart is drawn at its canvas size and scaled down to fit the preview,
+   * so the scale has to come from the preview's real width — a plugin window
+   * can be dragged to any size, and a hardcoded one either clips the chart or
+   * strands it in the corner of a wide panel.
+   */
+  const previewRef = useRef<HTMLDivElement>(null)
+  const [boxWidth, setBoxWidth] = useState(0)
+  useEffect(() => {
+    const el = previewRef.current
+    if (!el) return
+    // clientWidth includes the preview's own padding, which the chart cannot use.
+    const measure = () => setBoxWidth(Math.max(0, el.clientWidth - PREVIEW_PADDING * 2))
+    measure()
+    if (typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const avail = boxWidth > 0 ? boxWidth : FALLBACK_PREVIEW_WIDTH
+  const scale = build.width > 0 ? Math.min(1, avail / build.width) : 1
 
   return (
     <div class="pane">
@@ -126,33 +152,43 @@ export function OrbatPane(props: {
         </div>
       )}
 
-      <div class="preview" style={`min-height:120px;align-items:flex-start;justify-content:flex-start;overflow:auto;height:${Math.min(320, Math.max(120, build.height * scale + 24))}px`}>
+      <div
+        ref={previewRef}
+        class="preview"
+        style={`min-height:120px;align-items:flex-start;justify-content:flex-start;overflow:auto;height:${Math.min(320, Math.max(120, build.height * scale + PREVIEW_PADDING * 2))}px`}
+      >
         {build.count === 0 ? (
-          <div class="empty">Nothing to draw yet.</div>
+          <div class="empty">
+            <div class="em-circle" aria-hidden="true">N</div>
+            <h3>Nothing to draw yet</h3>
+            <p>Write one unit per line above, indenting to nest subordinates.</p>
+          </div>
         ) : (
-          <div class="orbat-canvas" style={`position:relative;width:${build.width}px;height:${build.height}px;transform:scale(${scale});transform-origin:top left;flex:0 0 auto`}>
-            <div
-              style="position:absolute;inset:0"
-              dangerouslySetInnerHTML={{ __html: build.connectorSvg }}
-            />
-            {build.placed.map((node, i) => (
+          <div class="orbat-fit" style={`width:${build.width * scale}px;height:${build.height * scale}px`}>
+            <div class="orbat-canvas" style={`position:relative;width:${build.width}px;height:${build.height}px;transform:scale(${scale});transform-origin:top left`}>
               <div
-                key={node.id}
-                class="orbat-cell"
-                style={`position:absolute;left:${node.x}px;top:${node.y}px;width:${node.width}px;height:${node.height}px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start`}
-                title={node.sidc}
-              >
-                <SymbolCell
-                  markup={build.previews[i] ?? ''}
-                  anchor={build.anchors[i] ?? null}
-                  width={node.width}
-                  height={node.height - settings.labelHeight}
-                />
-                <div style={`font-size:${settings.labelFontSize}px;line-height:${settings.labelHeight}px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%`}>
-                  {node.label}
+                style="position:absolute;inset:0"
+                dangerouslySetInnerHTML={{ __html: build.connectorSvg }}
+              />
+              {build.placed.map((node, i) => (
+                <div
+                  key={node.id}
+                  class="orbat-cell"
+                  style={`position:absolute;left:${node.x}px;top:${node.y}px;width:${node.width}px;height:${node.height}px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start`}
+                  title={node.sidc}
+                >
+                  <SymbolCell
+                    markup={build.previews[i] ?? ''}
+                    anchor={build.anchors[i] ?? null}
+                    width={node.width}
+                    height={node.height - settings.labelHeight}
+                  />
+                  <div style={`font-size:${settings.labelFontSize}px;line-height:${settings.labelHeight}px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%`}>
+                    {node.label}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -21,7 +21,7 @@ export function SelectionPane(props: {
     <div class="pane">
       {props.selection.length === 0 && (
         <div class="empty">
-          <div class="em-circle" aria-hidden="true">□</div>
+          <div class="em-circle" aria-hidden="true">N</div>
           <h3>Nothing selected</h3>
           <p>Select symbols on the canvas to restyle them, change their affiliation, or load one back into the builder.</p>
         </div>

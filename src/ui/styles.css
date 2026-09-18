@@ -16,15 +16,22 @@
   /* Director's --line is 1.24:1 on white, so a text field, a select or a
      button has no edge a low-vision user can find. Decorative rules keep
      --line/--line-soft; anything that is the boundary of a control uses this
-     one, which clears the 3:1 that WCAG 1.4.11 asks of a control's shape. */
-  --line-strong: #b6bcc6;
+     one. It has to clear 3:1 (WCAG 1.4.11) against the colours on both sides
+     of the stroke — the page --bg outside and the --surface fill inside — and
+     that lands much darker than it looks like it should: 3.17:1 on --bg and
+     3.03:1 on --surface. Anything lighter measures under 2:1 and is decorative
+     however solid it appears. */
+  --line-strong: #8b919b;
   --ink: #111827;
   --ink-body: #374151;
   --muted: #6b7280;
-  /* Director ships #9ca3af here, which is 2.5:1 on white and is used for real
-     text at 10-11.5px. Darkened to the lightest grey that clears 4.5:1 on both
-     --bg and --surface; it stays a clear step lighter than --muted. */
-  --faint: #767d8a;
+  /* Director's third grey, kept verbatim, but deliberately unused for text.
+     --muted is itself only 4.83:1 on white, so no grey lighter than it can
+     carry 10-11.5px text at 4.5:1 — a lighter tier is unreachable, not just
+     badly chosen. Everything that used to be --faint (the header subtitle, the
+     result path and SIDC, placeholders, empty copy) is --muted now. Reach for
+     this only for a non-text hairline, never for a run of words. */
+  --faint: #9ca3af;
   --brand: #5a4eff;
   --brand-hover: #483bff;
   --brand-grad-2: #7b72ff;
@@ -130,7 +137,7 @@ body {
   white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis;
 }
 .brand-sub {
-  font-size: 10px; font-weight: 500; color: var(--faint);
+  font-size: 10px; font-weight: 500; color: var(--muted);
   white-space: nowrap; letter-spacing: 0.01em;
   flex: 0 3 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
 }
@@ -247,7 +254,9 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 1px var(--brand);
 }
-input::placeholder, textarea::placeholder { color: var(--faint); font-weight: 400; }
+/* A placeholder is text a sighted user has to read to know what the field
+   wants, so it carries the same 4.5:1 floor as any other copy. */
+input::placeholder, textarea::placeholder { color: var(--muted); font-weight: 400; }
 select { cursor: pointer; }
 input[type="range"] { height: var(--row); accent-color: var(--brand); }
 input[type="color"] {
@@ -291,9 +300,12 @@ button.btn {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+  /* Only a button that asked to grow may be squeezed; the rest keep the width
+     their label needs, so a narrow row never shortens "SIDC" to "S…". */
+  flex: none;
   transition: all 0.14s;
 }
+button.btn.grow { flex: 1 1 auto; min-width: 0; }
 button.btn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
 button.btn:active:not(:disabled) { transform: scale(0.98); }
 /* Dimming the whole button takes its label down with it, and the label is the
@@ -445,18 +457,23 @@ button.btn.sm { height: 26px; padding: 0 11px; font-size: 10.5px; }
 .result .name b { font-size: 11.5px; font-weight: 600; color: var(--ink); }
 .result .path {
   display: block;
-  color: var(--faint);
+  color: var(--muted);
   font-size: 10.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .result .code {
-  color: var(--faint);
+  color: var(--muted);
   font-family: ui-monospace, Menlo, monospace;
   font-size: 10px;
   flex: none;
 }
+/* Same trade as the selected gallery cell: --brand-tint replaces the white row
+   fill outright, which takes --muted to 4.20:1. The row the user picked gets
+   the darker ink rather than being the least legible one in the list. */
+.result[aria-pressed="true"] .path,
+.result[aria-pressed="true"] .code { color: var(--ink-body); }
 
 /* --------------------------------------------------------------- gallery */
 
